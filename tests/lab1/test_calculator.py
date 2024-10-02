@@ -1,5 +1,13 @@
 import unittest
+import sys
+import os
+
+# Добавляем путь к корневой директории проекта
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+
+# Импортируем модуль calculator
 from src.lab1.calculator import calculator
+
 
 
 class CalculatorTestCase(unittest.TestCase):
