@@ -1,5 +1,10 @@
 import unittest
-from cs102.src.lab1.calculator import calculator
+import sys
+import os
+
+# Добавляем путь к директории src
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src/lab1')))
+from calculator import calculator
 
 
 class CalculatorTestCase(unittest.TestCase):
