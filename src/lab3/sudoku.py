@@ -95,7 +95,13 @@ def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[in
     >>> find_empty_positions([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']])
     (2, 0)
     """
-    pass
+    for row in range(len(grid)):
+        row_content = grid[row]
+        for col in range(len(row_content)):
+            col_content = row_content[col]
+            if col_content == '.':
+                return (row, col)
+    return None
 
 
 def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.Set[str]:
