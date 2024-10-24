@@ -14,6 +14,8 @@ def read_sudoku(path: tp.Union[str, pathlib.Path]) -> tp.List[tp.List[str]]:
 
 def create_grid(puzzle: str) -> tp.List[tp.List[str]]:
     digits = [c for c in puzzle if c in "123456789."]
+    if len(digits) != 81:
+        raise ValueError('The puzzle must contain 81 elements')
     grid = group(digits, 9)
     return grid
 
@@ -41,6 +43,8 @@ def group(values: tp.List[T], n: int) -> tp.List[tp.List[T]]:
     >>> group([1,2,3,4,5,6,7,8,9], 3)
     [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     """
+    if n <= 0:
+        raise ValueError('Group size must be positive number')
     return [values[i:i+n] for i in range(0, len(values), n)]
 
 
@@ -53,7 +57,9 @@ def get_row(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     >>> get_row([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']], (2, 0))
     ['.', '8', '9']
     """
-    row, _ = pos
+    row, col = pos
+    if row >= len(grid) or row < 0:
+        raise IndexError('Row index is out of range')
     return grid[row]
 
 
@@ -66,7 +72,9 @@ def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     >>> get_col([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']], (0, 2))
     ['3', '6', '9']
     """
-    _, col = pos
+    row, col = pos
+    if col >= len(grid[0]) or col < 0:
+        raise IndexError('Column index is out of range')
     return [grid[row][col] for row in range(len(grid))]
 
 
@@ -81,6 +89,8 @@ def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[s
     ['2', '8', '.', '.', '.', '5', '.', '7', '9']
     """
     row, col = pos
+    if not(0 <= row < 9 and 0 <= col < 9):
+        raise IndexError('Position index is out of range')
     block_row = 3 * (row // 3)
     block_col = 3 * (col // 3)
     return [grid[row][col] for row in range(block_row, block_row+3) for col in range(block_col, block_col+3)]
@@ -134,13 +144,44 @@ def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
     >>> solve(grid)
     [['5', '3', '4', '6', '7', '8', '9', '1', '2'], ['6', '7', '2', '1', '9', '5', '3', '4', '8'], ['1', '9', '8', '3', '4', '2', '5', '6', '7'], ['8', '5', '9', '7', '6', '1', '4', '2', '3'], ['4', '2', '6', '8', '5', '3', '7', '9', '1'], ['7', '1', '3', '9', '2', '4', '8', '5', '6'], ['9', '6', '1', '5', '3', '7', '2', '8', '4'], ['2', '8', '7', '4', '1', '9', '6', '3', '5'], ['3', '4', '5', '2', '8', '6', '1', '7', '9']]
     """
-    pass
+    pos = find_empty_positions(grid)
+    if not pos:
+        return grid
+    row, col = pos
+    possible_values = find_possible_values(grid, pos)
+    for value in possible_values:
+        grid[row][col] = value
+        solution = solve(grid)
+        if solution:
+            return solution
+        grid[row][col] = '.'
+    return None
 
 
 def check_solution(solution: tp.List[tp.List[str]]) -> bool:
     """ Если решение solution верно, то вернуть True, в противном случае False """
     # TODO: Add doctests with bad puzzles
-    pass
+    def is_valid(group: tp.List[str]) -> bool:
+        values = [value for value in group if value != '.']
+        return (
+                 all(value in '123456789' for value in values) and len(values) == len(set(values)))
+
+    for block_row in range(0, 9, 3):
+        for block_column in range(0, 9, 3):
+            block = [solution[row][column] for row in range(block_row, block_row+3) for column in range(block_column, block_column+3)]
+            if not is_valid(block):
+                return False
+
+    for row in solution:
+        if not is_valid(row):
+            return False
+
+    for col in range(9):
+        column = [solution[row][col] for row in range(9)]
+        if not is_valid(column):
+            return False
+
+    return True
 
 
 def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
@@ -176,3 +217,4 @@ if __name__ == "__main__":
             print(f"Puzzle {fname} can't be solved")
         else:
             display(solution)
+            
