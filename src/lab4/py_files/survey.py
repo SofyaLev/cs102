@@ -1,5 +1,5 @@
 from .consts import MAX_AGE
-from typing import Optional, List
+from typing import Optional
 
 
 class Respondent:
@@ -28,9 +28,9 @@ class AgeGroup:
         self.label = label
         self.lower = lower
         self.upper = upper
-        self.respondents: List[Respondent] = []
+        self.respondents = []
 
-    def add_respondent(self, respondent: Respondent):
+    def add_respondent(self, respondent):
         """
         Добавление респондента в возрастную группу
         """
@@ -60,14 +60,14 @@ class Survey:
     """
     Обработка списка респондентов и распределение их по возрастным группам
     """
-    def __init__(self, limits: List[int]):
+    def __init__(self, limits):
         """
         Инициализация обработки заданных границ возрастных групп
         """
         if not self.valid_limits(limits):
             raise ValueError(f'Границы групп должны быть возрастающими числами от 1 до {MAX_AGE} включительно')
         self.limits = limits
-        self.age_groups: List[AgeGroup] = self.create_age_groups()
+        self.age_groups = self.create_age_groups()
 
     def valid_limits(self, limits):
         """
@@ -97,7 +97,7 @@ class Survey:
         groups.sort(key=lambda x: x.lower, reverse=True)
         return groups
 
-    def add_respondent(self, respondent: Respondent):
+    def add_respondent(self, respondent):
         """
         Добавление респондента в возрастную группу
         """
@@ -112,7 +112,7 @@ class Survey:
                     group.add_respondent(respondent)
                     return
 
-    def process(self, respondents: List[Respondent]):
+    def process(self, respondents):
         """
         Обработка списка респондентов и распределение их по возрастным группам
         """
