@@ -15,7 +15,7 @@ def main():
     if recommendation:
         print(recommendation)
     else:
-        print('Нет подходящих рекоммендаций')
+        print('Нет подходящих рекомендаций')
 
 
 if __name__ == '__main__':
