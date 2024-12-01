@@ -43,7 +43,7 @@ class TestMovieRecommender(unittest.TestCase):
         """Тестирование случая, когда совпадает ровно половина фильмов"""
         user_movies = [1, 2]
         recommended_movie = self.recommender.recommend(user_movies)
-        # Рекомендация бдолжна быть из оставшихся фильмов
+        # Рекомендация должна быть из оставшихся фильмов
         self.assertEqual(recommended_movie, 'Дюна')
 
     def test_empty_user_movies(self):
@@ -53,7 +53,7 @@ class TestMovieRecommender(unittest.TestCase):
         self.assertIsNone(recommended_movie)
 
     def test_recommendation_with_weights(self):
-        """Тестирование верного подсчета веса рекоммендаций"""
+        """Тестирование верного подсчета веса рекомендаций"""
         user_movies = [1, 3]
         recommended_movie = self.recommender.recommend(user_movies)
         # Проверка на то, что рекомендован фильм с максимальным весом
